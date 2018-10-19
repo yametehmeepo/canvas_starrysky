@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+	<title>canvas制作一片星空</title>
+	<style>
+		html,body{
+			margin: 0;
+			padding: 0;
+		}
+		#buttons a + a{
+			margin-left: 8px;
+		}
+	</style>
+</head>
+<body>
+	<canvas id="canvas" style="border: 0px solid #eee; display: block; margin:0px auto;">canvas</canvas>
+	<script>
+		var windowW = 800;
+		var windowH = 800;//canvas高
+		var skyHeight = 0.65; //天空高度系数
+		var landHeight = 0.28; //陆地高度系数
+		window.onload = function(){
+			var canvas = document.getElementById('canvas');
+			windowW = document.documentElement.clientWidth;
+			windowH = document.documentElement.clientHeight;
+			canvas.width = windowW;
+			canvas.height = windowH;
+			var context = canvas.getContext('2d');
+			var gradient = context.createRadialGradient(canvas.width/2, canvas.height, 0, canvas.width/2, canvas.height, canvas.height);
+			gradient.addColorStop(0.0, '#035');
+			gradient.addColorStop(1.0, 'black');
+			context.fillStyle = gradient;
+			context.fillRect(0, 0, canvas.width, canvas.height);
+			fillLand(context, windowW, windowH, windowH*landHeight, '#030', '#580');
+			for( var i = 0; i < 250; i++){
+				var r = Math.random() * 5 + 5;
+				var x = Math.random() * (canvas.width - 2*r) + r;
+				var y = Math.random() * (canvas.height - 2*r)*skyHeight + r;
+				var a = Math.random() * 360;
+				//var color = 'rgba(' + Math.random() * 255 + ',' + Math.random() * 255 + ',' + Math.random() * 255 + ', 1';
+				var color = '#f9bc35';
+				drawStar(r, x, y, color, 1, a, context);
+			}
+			fillMoon(context, windowW*5/6, windowH/6, windowH/10, 30, '#fb5');
+		}
+
+		function fillLand(cxt, w, h, landH, c1, c2){
+			cxt.save();
+			cxt.beginPath();
+			cxt.moveTo(0, h - landH);
+			cxt.bezierCurveTo(w/4, h - landH - h/10, w*3/4, h - landH + h/5, w, h - landH + h/40);
+			cxt.lineTo(w, h);
+			cxt.lineTo(0, h);
+			cxt.closePath();
+			var landStyle = cxt.createLinearGradient(0, h, 0, 0);
+			landStyle.addColorStop(0.0, c1);
+			landStyle.addColorStop(1.0, c2);
+			cxt.fillStyle = landStyle;
+			cxt.fill();
+			cxt.restore();
+		}
+
+		function fillMoon(cxt, x, y, r, angle, color){
+			cxt.save();
+			cxt.translate(x, y);
+			cxt.scale(r, r);
+			cxt.rotate(angle*Math.PI/180);
+			pathMoon(cxt);
+			cxt.fillStyle = color || '#fb5';
+			cxt.fill();
+			cxt.restore();
+		}
+
+		function pathMoon(cxt){
+			cxt.beginPath();
+			cxt.arc(0, 0, 1, 0.5*Math.PI, 1.5*Math.PI, true);
+			cxt.moveTo(0, -1);
+			cxt.quadraticCurveTo(1, 0, 0, 1);//贝塞尔二次曲线
+		}
+
+		function radiusCalculation(r, d){
+			return Math.sqrt(r*r + d*d)*r/d
+		}
+		function drawStar(r, x, y, color, lineWidth, rot, cxt){
+			cxt.save();
+			cxt.translate(x, y);
+			cxt.rotate(rot*Math.PI/180);
+			cxt.scale(r, r);
+			startPath(cxt);
+			//cxt.strokeStyle = '#f7d76c';
+			//cxt.lineWidth = lineWidth;
+			cxt.fillStyle = color;
+			cxt.fill();
+			//cxt.stroke();
+			cxt.restore();
+		}
+
+		function startPath(cxt){
+			cxt.beginPath();
+			for(var i = 0; i < 5; i++){
+				cxt.lineTo(Math.cos((18 + i * 72)/180 * Math.PI), -Math.sin((18 + i * 72)/180 * Math.PI));
+				cxt.lineTo(Math.cos((54 + i * 72)/180 * Math.PI)*0.5, -Math.sin((54 + i * 72)/180 * Math.PI)*0.5);
+			}
+			cxt.closePath();
+		}
+	</script>
+</body>
+</html>

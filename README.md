@@ -1,0 +1,2 @@
+# canvas_starrysky
+用canvas绘制一片星空, 其中运用context的API有: `createRadialGradient` `createLinearGradient` `bezierCurveTo` `quadraticCurveTo` `translate` `scale` `rotate` , 需要注意的是天空随机位置绘制的小星星进行了画布边缘的碰撞检测, 确保每个星星完整的出现在画布内, 还需要强化五角星绘制所涉及到的数学知识
